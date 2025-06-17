@@ -150,11 +150,15 @@ function saveWeekToArchive() {
     weeklyScores[name] = 0;
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k.includes(name)) {
-        const datePart = k.split("-")[1];
-        if (getWeekStart(datePart) === weekStart) {
-          const tasks = JSON.parse(localStorage.getItem(k));
-          weeklyScores[name] += tasks.filter(Boolean).length;
+      if (k.startsWith("tasks-") && k.includes(`-${name}`)) {
+        const match = k.match(/^tasks-(\d{4}-\d{2}-\d{2})-(.+)$/);
+        if (match) {
+          const datePart = match[1];
+          const taskName = match[2];
+          if (taskName === name && getWeekStart(datePart) === weekStart) {
+            const tasks = JSON.parse(localStorage.getItem(k));
+            weeklyScores[name] += tasks.filter(Boolean).length;
+          }
         }
       }
     }
@@ -163,6 +167,7 @@ function saveWeekToArchive() {
   localStorage.setItem(key, JSON.stringify(weeklyScores));
   alert(`Архив за неделю ${weekStart} сохранён.`);
 }
+
 
 // Инициализация
 document.getElementById("datePicker").addEventListener("change", renderTable);
