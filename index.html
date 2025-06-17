@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Задания детей</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    table, td, th {
+      border: 1px solid #ccc;
+      border-collapse: collapse;
+      padding: 4px;
+    }
+    canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h2>Учёт выполнения заданий</h2>
+  <label for="datePicker">Выберите дату:</label>
+  <input type="date" id="datePicker" />
+  <button onclick="authorize()">Вход родителя</button>
+  <button onclick="saveWeekToArchive()">Сохранить в архив</button>
+  <a href="archive.html" target="_blank">Перейти в архив</a>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Имя</th>
+        <!-- генерируем 18 заголовков -->
+        <script>
+          for (let i = 1; i <= 18; i++) {
+            document.write(`<th>${i}</th>`);
+          }
+        </script>
+      </tr>
+    </thead>
+    <tbody id="taskBody"></tbody>
+  </table>
+
+  <h3>Рейтинг за месяц</h3>
+  <canvas id="ratingChart" width="400" height="400"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
