@@ -148,14 +148,15 @@ function saveWeekToArchive() {
 
   children.forEach(name => {
     weeklyScores[name] = 0;
+
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k.startsWith("tasks-") && k.includes(`-${name}`)) {
-        const match = k.match(/^tasks-(\d{4}-\d{2}-\d{2})-(.+)$/);
+
+      if (k.startsWith("tasks-") && k.endsWith(`-${name}`)) {
+        const match = k.match(/^tasks-(\d{4}-\d{2}-\d{2})-/);
         if (match) {
           const datePart = match[1];
-          const taskName = match[2];
-          if (taskName === name && getWeekStart(datePart) === weekStart) {
+          if (getWeekStart(datePart) === weekStart) {
             const tasks = JSON.parse(localStorage.getItem(k));
             weeklyScores[name] += tasks.filter(Boolean).length;
           }
@@ -167,6 +168,7 @@ function saveWeekToArchive() {
   localStorage.setItem(key, JSON.stringify(weeklyScores));
   alert(`Архив за неделю ${weekStart} сохранён.`);
 }
+
 
 
 // Инициализация
