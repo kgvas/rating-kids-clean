@@ -1,3 +1,9 @@
+const taskPoints = [
+  1, 1, 1, 1, 1, 1, 5, 1, 1, 1,  // Задания 1–10
+  1, 1, 1, 1, 1, 1, 1, 1         // Задания 11–18
+];
+
+
 const children = ["Глеб", "Серафима", "Коля"];
 const numTasks = 18;
 const password = "parent123";
@@ -89,7 +95,9 @@ function updateChart() {
       const key = localStorage.key(i);
       if (key.startsWith(`tasks-${selectedMonth}`) && key.includes(`-${name}`)) {
         const tasks = JSON.parse(localStorage.getItem(key));
-        monthlyScores[name] += tasks.filter(Boolean).length;
+        monthlyScores[name] += tasks.reduce((sum, done, index) => {
+  return sum + (done ? taskPoints[index] : 0);
+}, 0);
       }
     }
   });
@@ -158,7 +166,10 @@ function saveWeekToArchive() {
           const datePart = match[1];
           if (getWeekStart(datePart) === weekStart) {
             const tasks = JSON.parse(localStorage.getItem(k));
-            weeklyScores[name] += tasks.filter(Boolean).length;
+           weeklyScores[name] += tasks.reduce((sum, done, index) => {
+  return sum + (done ? taskPoints[index] : 0);
+}, 0);
+
           }
         }
       }
