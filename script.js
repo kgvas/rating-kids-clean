@@ -2,6 +2,8 @@ const children = ["Глеб", "Серафима", "Коля"];
 const numTasks = 18;
 const password = "parent123";
 
+const taskPoints = JSON.parse(localStorage.getItem('taskPoints')) || Array(numTasks).fill(1);
+
 function authorize() {
   const input = prompt("Введите пароль родителя:");
   if (input === password) {
@@ -19,14 +21,6 @@ function getKey(dateStr, name) {
 
 function getCurrentDate() {
   return document.getElementById("datePicker").value || new Date().toISOString().slice(0, 10);
-}
-
-function getWeekStart(dateStr) {
-  const d = new Date(dateStr);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  const monday = new Date(d.setDate(diff));
-  return monday.toISOString().slice(0, 10);
 }
 
 function loadTasks(dateStr, name) {
@@ -77,6 +71,14 @@ function renderTable() {
   updateChart();
 }
 
+function getWeekStart(dateStr) {
+  const d = new Date(dateStr);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  const monday = new Date(d.setDate(diff));
+  return monday.toISOString().slice(0, 10);
+}
+
 function updateChart() {
   const monthlyScores = {};
   const selectedDate = getCurrentDate();
@@ -84,12 +86,13 @@ function updateChart() {
 
   children.forEach(name => {
     monthlyScores[name] = 0;
-
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key.startsWith(`tasks-${selectedMonth}`) && key.includes(`-${name}`)) {
+      if (key.startsWith(`tasks-${selectedMonth}`) && key.endsWith(`-${name}`)) {
         const tasks = JSON.parse(localStorage.getItem(key));
-        monthlyScores[name] += tasks.filter(Boolean).length;
+        monthlyScores[name] += tasks.reduce((sum, done, index) => {
+          return sum + (done ? taskPoints[index] : 0);
+        }, 0);
       }
     }
   });
@@ -101,11 +104,11 @@ function updateChart() {
 
   const names = Object.keys(monthlyScores);
   const scores = Object.values(monthlyScores);
-
   const backgroundColors = names.map(name => {
     if (name === 'Коля') return 'green';
     if (name === 'Серафима') return '#2b9ad6';
     if (name === 'Глеб') return '#8F00FF';
+    return 'gray';
   });
 
   window.myChart = new Chart(ctx, {
@@ -151,14 +154,15 @@ function saveWeekToArchive() {
 
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-
       if (k.startsWith("tasks-") && k.endsWith(`-${name}`)) {
         const match = k.match(/^tasks-(\d{4}-\d{2}-\d{2})-/);
         if (match) {
           const datePart = match[1];
           if (getWeekStart(datePart) === weekStart) {
             const tasks = JSON.parse(localStorage.getItem(k));
-            weeklyScores[name] += tasks.filter(Boolean).length;
+            weeklyScores[name] += tasks.reduce((sum, done, index) => {
+              return sum + (done ? taskPoints[index] : 0);
+            }, 0);
           }
         }
       }
@@ -169,9 +173,6 @@ function saveWeekToArchive() {
   alert(`Архив за неделю ${weekStart} сохранён.`);
 }
 
-
-
-// Инициализация
 document.getElementById("datePicker").addEventListener("change", renderTable);
 document.getElementById("datePicker").value = new Date().toISOString().slice(0, 10);
 renderTable();
