@@ -10,11 +10,6 @@
       border-collapse: collapse;
       padding: 4px;
     }
-    th input {
-      width: 30px;
-      font-size: 12px;
-      text-align: center;
-    }
     canvas {
       border: 1px solid #ccc;
     }
@@ -32,34 +27,10 @@
     <thead>
       <tr>
         <th>Имя</th>
+        <!-- генерируем 18 заголовков -->
         <script>
-          const defaultNames = [
-            "Зубы у", "Зубы в", "Мытьё головы", "Душ",
-            "Трейнер день", "Трейнер ночь", "Лого",
-            "Массаж", "Упр. для глаз", "Тренажер для глаз",
-            "Кинезио", "Степпер", "Гимнастика",
-            "Математика", "Пропись", "Книга", "Логика", "Лего"
-          ];
-
-          const taskColors = [
-            "green", "green", "green", "green",
-            "yellow", "yellow", "yellow",
-            "green", "green", "green",
-            "green", "green", "green",
-            "yellow", "yellow", "yellow", "yellow", "yellow"
-          ];
-
-          const savedPoints = JSON.parse(localStorage.getItem('taskPoints')) || Array(18).fill(1);
-          localStorage.setItem('taskPoints', JSON.stringify(savedPoints));
-
-          for (let i = 0; i < defaultNames.length; i++) {
-            const color = taskColors[i] || "white";
-            document.write(`
-              <th style="background: ${color}; ${color === 'yellow' ? '' : 'color: white;'}">
-                ${defaultNames[i]}<br>
-                (<input type="number" min="0" value="${savedPoints[i]}" onchange="updateTaskPoint(${i}, this.value)">)
-              </th>
-            `);
+          for (let i = 1; i <= 18; i++) {
+            document.write(`<th>${i}</th>`);
           }
         </script>
       </tr>
@@ -69,15 +40,6 @@
 
   <h3>Рейтинг за месяц</h3>
   <canvas id="ratingChart" width="400" height="400"></canvas>
-
-  <script>
-    function updateTaskPoint(index, newValue) {
-      const points = JSON.parse(localStorage.getItem('taskPoints')) || Array(18).fill(1);
-      points[index] = parseInt(newValue) || 0;
-      localStorage.setItem('taskPoints', JSON.stringify(points));
-      location.reload();
-    }
-  </script>
 
   <script src="script.js"></script>
 </body>
