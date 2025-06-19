@@ -23,16 +23,31 @@
   <button onclick="saveWeekToArchive()">Сохранить в архив</button>
   <a href="archive.html" target="_blank">Перейти в архив</a>
 
-  <table>
+ <table>
     <thead>
       <tr>
         <th>Имя</th>
-        <!-- генерируем 18 заголовков -->
-        <script>
-          for (let i = 1; i <= 18; i++) {
-            document.write(`<th>${i}</th>`);
-          }
-        </script>
+        <!-- Названия заданий: отредактируй прямо здесь -->
+       <th style="background: green">Зубы у</th>
+        <th style="background: green">Зубы в</th>
+        <th style="background: green">Мытьё головы</th>
+        <th style="background: green">Душ</th>
+        <th style="background: yellow">Трейнер день</th>
+        <th style="background: yellow">Трейнер ночь</th>
+        <th style="background: yellow">Лого</th>
+
+        <th style="background: green">Мас саж</th>
+        <th style="background: green">Упр. для глаз</th>
+        <th style="background: green">Тренажер для глаз</th>
+        
+        <th style="background: green">Кине зио</th>
+        <th style="background: green">Степ пер</th>
+        <th style="background: green">Гимнас тика</th>
+        <th style="background: yellow">Матема тика</th>
+        <th style="background: yellow">Про пись</th>
+        <th style="background: yellow">Книга</th>
+        <th style="background: yellow">Логи ка</th>
+        <th style="background: yellow">Лего</th>
       </tr>
     </thead>
     <tbody id="taskBody"></tbody>
