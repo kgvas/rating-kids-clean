@@ -166,10 +166,10 @@ function saveWeekToArchive() {
           const datePart = match[1];
           if (getWeekStart(datePart) === weekStart) {
             const tasks = JSON.parse(localStorage.getItem(k));
-           weeklyScores[name] += tasks.reduce((sum, done, index) => {
-  return sum + (done ? taskPoints[index] : 0);
-}, 0);
-
+            // Теперь правильно считаем баллы с учётом веса заданий
+            weeklyScores[name] += tasks.reduce((sum, done, index) => {
+              return sum + (done ? taskPoints[index] : 0);
+            }, 0);
           }
         }
       }
