@@ -2,52 +2,48 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Архив по неделям</title>
-  <style>
-    table, td, th {
-      border: 1px solid #ccc;
-      border-collapse: collapse;
-      padding: 4px;
-    }
-  </style>
-</head>
-<body>
-  <h2>Архив понедельного рейтинга</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Неделя (дата начала)</th>
-        <th>Глеб</th>
-        <th>Серафима</th>
-        <th>Коля</th>
-      </tr>
-    </thead>
-    <tbody id="archiveBody"></tbody>
-  </table>
+  <title>Архив</title>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module">
+    import { db } from './firebase-config.js';
+    import { collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js';
 
-  <script>
     const children = ["Глеб", "Серафима", "Коля"];
-    const tableBody = document.getElementById("archiveBody");
+    const tableBody = document.createElement("tbody");
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key.startsWith("week-")) {
-        const weekData = JSON.parse(localStorage.getItem(key));
+    async function loadArchive() {
+      const snapshot = await getDocs(collection(db, "weeks"));
+      snapshot.forEach(doc => {
         const row = document.createElement("tr");
+        const data = doc.data();
 
         const weekCell = document.createElement("td");
-        weekCell.textContent = key.slice(5); // дата недели
+        weekCell.textContent = doc.id;
         row.appendChild(weekCell);
 
         children.forEach(name => {
           const cell = document.createElement("td");
-          cell.textContent = weekData[name] ?? 0;
+          cell.textContent = data[name] ?? 0;
           row.appendChild(cell);
         });
 
         tableBody.appendChild(row);
-      }
+      });
     }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const table = document.createElement("table");
+      table.innerHTML = "<thead><tr><th>Неделя</th><th>Глеб</th><th>Серафима</th><th>Коля</th></tr></thead>";
+      table.appendChild(tableBody);
+      document.body.appendChild(table);
+      await loadArchive();
+    });
   </script>
+  <style>
+    table, td, th { border: 1px solid #ccc; border-collapse: collapse; padding: 4px; }
+  </style>
+</head>
+<body>
+  <h2>Архив понедельного рейтинга</h2>
 </body>
 </html>
