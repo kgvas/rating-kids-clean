@@ -11,6 +11,32 @@
     table, td, th { border: 1px solid #ccc; border-collapse: collapse; padding: 4px; }
     canvas { border: 1px solid #ccc; margin-top: 20px; }
   </style>
+  <script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js'; 
+  import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js'; 
+
+  const app = initializeApp({
+    apiKey: "YOUR_API_KEY",
+    authDomain: "rating-kids.firebaseapp.com",
+    projectId: "rating-kids",
+    storageBucket: "rating-kids.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  });
+
+  const db = getFirestore(app);
+
+  async function testConnection() {
+    try {
+      const snapshot = await getDocs(collection(db, "tasks"));
+      console.log("Количество документов в tasks:", snapshot.size);
+    } catch (e) {
+      console.error("Ошибка чтения из Firestore:", e.message);
+    }
+  }
+
+  testConnection();
+</script>
 </head>
 <body>
   <h2>Учёт выполнения заданий</h2>
