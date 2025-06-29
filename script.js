@@ -1,27 +1,49 @@
-const taskPoints = [
-  1, 1, 1, 1, 1, 1, 5, 1, 1, 1,  // Задания 1–10
-  1, 1, 1, 1, 1, 1, 1, 1         // Задания 11–18
-];
+import { auth, db } from "./firebase-config.js";
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.6.1/firebase-auth.js";
 
+import {
+  doc, setDoc, getDoc, getDocs, collection
+} from "https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js";
 
 const children = ["Глеб", "Серафима", "Коля"];
 const numTasks = 18;
-const password = "parent123";
+const taskPoints = [1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
-function authorize() {
-  const input = prompt("Введите пароль родителя:");
-  if (input === password) {
+// Авторизация
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = prompt("Email:");
+  const password = prompt("Пароль:");
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    alert("Ошибка входа: " + e.message);
+  }
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+});
+
+onAuthStateChanged(auth, user => {
+  const saveBtn = document.getElementById("saveWeekBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (user) {
     document.body.dataset.auth = "true";
-    alert("Доступ разрешён.");
+    logoutBtn.style.display = "inline";
+    saveBtn.disabled = false;
     renderTable();
   } else {
-    alert("Неверный пароль.");
+    document.body.dataset.auth = "false";
+    logoutBtn.style.display = "none";
+    saveBtn.disabled = true;
+    renderTable();
   }
-}
-
-function getKey(dateStr, name) {
-  return `tasks-${dateStr}-${name}`;
-}
+});
 
 function getCurrentDate() {
   return document.getElementById("datePicker").value || new Date().toISOString().slice(0, 10);
@@ -35,29 +57,29 @@ function getWeekStart(dateStr) {
   return monday.toISOString().slice(0, 10);
 }
 
-function loadTasks(dateStr, name) {
-  const key = getKey(dateStr, name);
-  const data = localStorage.getItem(key);
-  return data ? JSON.parse(data) : Array(numTasks).fill(false);
+async function loadTasks(dateStr, name) {
+  const key = `tasks-${dateStr}-${name}`;
+  const snap = await getDoc(doc(db, "tasks", key));
+  return snap.exists() ? snap.data().tasks : Array(numTasks).fill(false);
 }
 
-function saveTasks(dateStr, name, tasks) {
-  const key = getKey(dateStr, name);
-  localStorage.setItem(key, JSON.stringify(tasks));
+async function saveTasks(dateStr, name, tasks) {
+  const key = `tasks-${dateStr}-${name}`;
+  await setDoc(doc(db, "tasks", key), { tasks });
 }
 
-function renderTable() {
+async function renderTable() {
   const body = document.getElementById("taskBody");
   body.innerHTML = "";
   const date = getCurrentDate();
 
-  children.forEach(name => {
+  for (const name of children) {
     const row = document.createElement("tr");
     const nameCell = document.createElement("td");
     nameCell.textContent = name;
     row.appendChild(nameCell);
 
-    const tasks = loadTasks(date, name);
+    const tasks = await loadTasks(date, name);
 
     for (let i = 0; i < numTasks; i++) {
       const cell = document.createElement("td");
@@ -65,10 +87,10 @@ function renderTable() {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.checked = tasks[i];
-        checkbox.onchange = () => {
+        checkbox.onchange = async () => {
           tasks[i] = checkbox.checked;
-          saveTasks(date, name, tasks);
-          updateChart();
+          await saveTasks(date, name, tasks);
+          await updateChart();
         };
         cell.appendChild(checkbox);
       } else {
@@ -78,42 +100,41 @@ function renderTable() {
     }
 
     body.appendChild(row);
-  });
+  }
 
-  updateChart();
+  await updateChart();
 }
 
-function updateChart() {
-  const monthlyScores = {};
-  const selectedDate = getCurrentDate();
-  const selectedMonth = selectedDate.substring(0, 7);
+async function updateChart() {
+  const selectedMonth = getCurrentDate().slice(0, 7);
+  const monthlyScores = Object.fromEntries(children.map(c => [c, 0]));
 
-  children.forEach(name => {
-    monthlyScores[name] = 0;
+  const snapshot = await getDocs(collection(db, "tasks"));
+  snapshot.forEach(docSnap => {
+    const { tasks } = docSnap.data();
+    const key = docSnap.id;
+    const match = key.match(/^tasks-(\d{4}-\d{2})-\d{2}-(.+)$/) || key.match(/^tasks-(\d{4}-\d{2}-\d{2})-(.+)$/);
+    if (!match) return;
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key.startsWith(`tasks-${selectedMonth}`) && key.includes(`-${name}`)) {
-        const tasks = JSON.parse(localStorage.getItem(key));
-        monthlyScores[name] += tasks.reduce((sum, done, index) => {
-  return sum + (done ? taskPoints[index] : 0);
-}, 0);
-      }
+    const date = match[1];
+    const name = match[2];
+    if (date.startsWith(selectedMonth) && monthlyScores[name] !== undefined) {
+      tasks.forEach((done, i) => {
+        if (done) monthlyScores[name] += taskPoints[i];
+      });
     }
   });
 
   const ctx = document.getElementById('ratingChart').getContext('2d');
-  if (window.myChart) {
-    window.myChart.destroy();
-  }
+  if (window.myChart) window.myChart.destroy();
 
   const names = Object.keys(monthlyScores);
   const scores = Object.values(monthlyScores);
-
   const backgroundColors = names.map(name => {
     if (name === 'Коля') return 'green';
     if (name === 'Серафима') return '#2b9ad6';
     if (name === 'Глеб') return '#8F00FF';
+    return 'gray';
   });
 
   window.myChart = new Chart(ctx, {
@@ -132,57 +153,44 @@ function updateChart() {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: function (context) {
-              return `${context.raw} баллов`;
-            }
+            label: ctx => `${ctx.raw} баллов`
           }
         }
       },
       scales: {
-        y: {
-          beginAtZero: true,
-          precision: 0
-        }
+        y: { beginAtZero: true, precision: 0 }
       }
     }
   });
 }
 
-function saveWeekToArchive() {
-  const weeklyScores = {};
+document.getElementById("datePicker").addEventListener("change", renderTable);
+document.getElementById("saveWeekBtn").addEventListener("click", saveWeekToArchive);
+document.getElementById("datePicker").value = new Date().toISOString().slice(0, 10);
+
+async function saveWeekToArchive() {
   const currentDate = getCurrentDate();
   const weekStart = getWeekStart(currentDate);
-  const key = `week-${weekStart}`;
+  const weeklyScores = Object.fromEntries(children.map(c => [c, 0]));
 
-  children.forEach(name => {
-    weeklyScores[name] = 0;
+  const snapshot = await getDocs(collection(db, "tasks"));
+  snapshot.forEach(docSnap => {
+    const { tasks } = docSnap.data();
+    const key = docSnap.id;
+    const match = key.match(/^tasks-(\d{4}-\d{2}-\d{2})-(.+)$/);
+    if (!match) return;
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-
-      if (k.startsWith("tasks-") && k.endsWith(`-${name}`)) {
-        const match = k.match(/^tasks-(\d{4}-\d{2}-\d{2})-/);
-        if (match) {
-          const datePart = match[1];
-          if (getWeekStart(datePart) === weekStart) {
-            const tasks = JSON.parse(localStorage.getItem(k));
-            // Теперь правильно считаем баллы с учётом веса заданий
-            weeklyScores[name] += tasks.reduce((sum, done, index) => {
-              return sum + (done ? taskPoints[index] : 0);
-            }, 0);
-          }
-        }
-      }
+    const date = match[1];
+    const name = match[2];
+    if (getWeekStart(date) === weekStart && weeklyScores[name] !== undefined) {
+      tasks.forEach((done, i) => {
+        if (done) weeklyScores[name] += taskPoints[i];
+      });
     }
   });
 
-  localStorage.setItem(key, JSON.stringify(weeklyScores));
+  await setDoc(doc(db, "weeks", weekStart), weeklyScores);
   alert(`Архив за неделю ${weekStart} сохранён.`);
 }
 
-
-
-// Инициализация
-document.getElementById("datePicker").addEventListener("change", renderTable);
-document.getElementById("datePicker").value = new Date().toISOString().slice(0, 10);
 renderTable();
