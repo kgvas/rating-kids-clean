@@ -2,52 +2,34 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Задания детей</title>
+  <title>Учёт заданий</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="script.js"></script>
   <style>
-    table, td, th {
-      border: 1px solid #ccc;
-      border-collapse: collapse;
-      padding: 4px;
-    }
-    canvas {
-      border: 1px solid #ccc;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    table, td, th { border: 1px solid #ccc; border-collapse: collapse; padding: 4px; }
+    canvas { border: 1px solid #ccc; margin-top: 20px; }
   </style>
 </head>
 <body>
   <h2>Учёт выполнения заданий</h2>
-  <label for="datePicker">Выберите дату:</label>
+  <label for="datePicker">Дата:</label>
   <input type="date" id="datePicker" />
-  <button onclick="authorize()">Вход родителя</button>
-  <button onclick="saveWeekToArchive()">Сохранить в архив</button>
+  <button id="loginBtn">Вход родителя</button>
+  <button id="logoutBtn" style="display:none;">Выйти</button>
+  <button id="saveWeekBtn" disabled>Сохранить в архив</button>
   <a href="archive.html" target="_blank">Перейти в архив</a>
 
- <table>
+  <table>
     <thead>
       <tr>
         <th>Имя</th>
-        <!-- Названия заданий: отредактируй прямо здесь -->
-       <th style="background: green">Зубы у</th>
-        <th style="background: green">Зубы в</th>
-        <th style="background: green">Мытьё головы</th>
-        <th style="background: green">Душ</th>
-        <th style="background: yellow">Трейнер день</th>
-        <th style="background: yellow">Трейнер ночь</th>
-        <th style="background: yellow">Лого</th>
-
-        <th style="background: green">Мас саж</th>
-        <th style="background: green">Упр. для глаз</th>
-        <th style="background: green">Тренажер для глаз</th>
-        
-        <th style="background: green">Кине зио</th>
-        <th style="background: green">Степ пер</th>
-        <th style="background: green">Гимнас тика</th>
-        <th style="background: yellow">Матема тика</th>
-        <th style="background: yellow">Про пись</th>
-        <th style="background: yellow">Книга</th>
-        <th style="background: yellow">Логи ка</th>
-        <th style="background: yellow">Лего</th>
+        <th>Зубы у</th><th>Зубы в</th><th>Мытьё головы</th><th>Душ</th>
+        <th>Трейнер день</th><th>Трейнер ночь</th><th>Лого</th>
+        <th>Массаж</th><th>Упр. глаза</th><th>Трен. глаза</th>
+        <th>Кинезио</th><th>Степпер</th><th>Гимнастика</th>
+        <th>Математика</th><th>Пропись</th><th>Книга</th><th>Логика</th><th>Лего</th>
       </tr>
     </thead>
     <tbody id="taskBody"></tbody>
@@ -55,7 +37,5 @@
 
   <h3>Рейтинг за месяц</h3>
   <canvas id="ratingChart" width="400" height="400"></canvas>
-
-  <script src="script.js"></script>
 </body>
 </html>
