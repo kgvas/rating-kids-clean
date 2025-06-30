@@ -12,30 +12,27 @@
     canvas { border: 1px solid #ccc; margin-top: 20px; }
   </style>
   <script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js';
-  import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js';
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  const app = initializeApp({
-    apiKey: "AIzaSyDmS0s4atP885XoLoMAA21ff_LmPaYqvcg",
-    authDomain: "rating-kids.firebaseapp.com",
-    projectId: "rating-kids",
-    storageBucket: "rating-kids.appspot.com",
-    messagingSenderId: "1031565546493",
-    appId: "1:1031565546493:web:6fb783c12c9f22653e7f94"
-  });
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeWspvFMsdh-PAx2COIau3W9sTypuXI34",
+    authDomain: "rating-kids-c2983.firebaseapp.com",
+    projectId: "rating-kids-c2983",
+    storageBucket: "rating-kids-c2983.firebasestorage.app",
+    messagingSenderId: "156035607480",
+    appId: "1:156035607480:web:2d2b4f85503b950c19bd4d",
+    measurementId: "G-L4271P4VQB"
+  };
 
-  const db = getFirestore(app);
-
-  async function testConnection() {
-    try {
-      const snapshot = await getDocs(collection(db, "tasks"));
-      console.log("Количество документов в tasks:", snapshot.size);
-    } catch (e) {
-      console.error("Ошибка чтения из Firestore:", e.message);
-    }
-  }
-
-  testConnection();
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 </script>
 
 </head>
