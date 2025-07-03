@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Учёт заданий</title>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.js"></script>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="script.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    table, td, th { border: 1px solid #ccc; border-collapse: collapse; padding: 4px; }
+    canvas { border: 1px solid #ccc; margin-top: 20px; }
+  </style>
+  <!--<script type="module">
+  // Import основных сервисов
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js ";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js ";
+
+  // Импортируйте нужные вам службы
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js ";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js ";
+
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeWspvFMsdh-PAx2COIau3W9sTypuXI34",
+    authDomain: "rating-kids-c2983.firebaseapp.com",
+    projectId: "rating-kids-c2983",
+    storageBucket: "rating-kids-c2983.firebasestorage.app",
+    messagingSenderId: "156035607480",
+    appId: "1:156035607480:web:2d2b4f85503b950c19bd4d",
+    measurementId: "G-L4271P4VQB"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
+  // Получите доступ к нужным сервисам
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Теперь вы можете использовать auth и db в остальном коде
+</script> -->
+<link rel="icon" href="data:;base64,=">
+</head>
+<body>
+  <h2>Учёт выполнения заданий</h2>
+  <label for="datePicker">Дата:</label>
+  <input type="date" id="datePicker" />
+  <button id="loginBtn">Вход родителя</button>
+  <button id="logoutBtn" style="display:none;">Выйти</button>
+  <button id="saveWeekBtn" disabled>Сохранить в архив</button>
+  <a href="archive.html" target="_blank">Перейти в архив</a>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Имя</th>
+        <th>Зубы у</th><th>Зубы в</th><th>Мытьё головы</th><th>Душ</th>
+        <th>Трейнер день</th><th>Трейнер ночь</th><th>Лого</th>
+        <th>Массаж</th><th>Упр. глаза</th><th>Трен. глаза</th>
+        <th>Кинезио</th><th>Степпер</th><th>Гимнастика</th>
+        <th>Математика</th><th>Пропись</th><th>Книга</th><th>Логика</th><th>Лего</th>
+      </tr>
+    </thead>
+    <tbody id="taskBody"></tbody>
+  </table>
+
+  <h3>Рейтинг за месяц</h3>
+  <canvas id="ratingChart" width="400" height="400"></canvas>
+</body>
+</html>
