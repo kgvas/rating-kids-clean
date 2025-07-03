@@ -1,16 +1,15 @@
-// Инициализация SDK Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDmS0s4atP885XoLoMAA21ff_LmPaYqvcg",
-  authDomain: "rating-kids.firebaseapp.com",
-  projectId: "rating-kids",
-  storageBucket: "rating-kids.appspot.com", // Исправлено: ".app" → ".com"
-  messagingSenderId: "1031565546493",
-  appId: "1:1031565546493:web:6fb783c12c9f22653e7f94",
-  measurementId: "G-FEK2JMG4LJ"
+  apiKey: "AIzaSyCeWspvFMsdh-PAx2COIau3W9sTypuXI34",
+  authDomain: "rating-kids-c2983.firebaseapp.com",
+  projectId: "rating-kids-c2983",
+  storageBucket: "rating-kids-c2983.firebasestorage.app",
+  messagingSenderId: "156035607480",
+  appId: "1:156035607480:web:2d2b4f85503b950c19bd4d",
+  measurementId: "G-L4271P4VQB"
 };
 
 const app = initializeApp(firebaseConfig);
