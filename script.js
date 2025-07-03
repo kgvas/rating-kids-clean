@@ -3,11 +3,11 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.6.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 import {
   doc, setDoc, getDoc, getDocs, collection
-} from "https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const children = ["Глеб", "Серафима", "Коля"];
 const numTasks = 18;
@@ -19,6 +19,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   const password = prompt("Пароль:");
   try {
     await signInWithEmailAndPassword(auth, email, password);
+	alert("Вход выполнен успешно!");
   } catch (e) {
     alert("Ошибка входа: " + e.message);
   }
